@@ -2,3 +2,7 @@
 
 S3method(filter,default)
 S3method(mutate,default)
+export(in_set)
+export(in_set_func)
+export(v_filter)
+export(v_mutate)

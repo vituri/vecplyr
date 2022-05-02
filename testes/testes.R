@@ -23,3 +23,41 @@ iris %>%
 1:10 %>%
   in_set(5:14)
 
+1:10 %>%
+  v_filter(\(x) x >= 4)
+
+1:10 %>%
+  v_mutate(\(x) x^2)
+
+1:10 %>%
+  v_mutate(\(x) x^5 + 10, \(x) x <= 4)
+
+1:10 %>%
+  v_mutate(999, \(x) x <= 4)
+
+1:10 %>%
+  v_mutate(\(x) x^2, \(x) x %% 2 == 0)
+
+
+1:10 %>%
+  v_mutate(999, FALSE)
+
+1:10 %>%
+  v_mutate(999, TRUE)
+
+1:10 %>%
+  v_mutate(999, c(TRUE, FALSE) %>% vituripackage::sample_safe(10))
+
+tibble(
+  a = c(NA_character_, 'a') %>% vituripackage::sample_safe(10)
+  ,b = 'b'
+) %>%
+  mutate(
+    a = a %>% v_mutate(b, is.na)
+  )
+
+1:10 %>%
+  v_filter(\(x) x^2 < 7)
+
+iris %>%
+  as_tibble()
