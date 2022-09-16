@@ -7,9 +7,9 @@
 <!-- badges: end -->
 
 `vecplyr` extends 2 dplyr functions to vectors: `filter` and `mutate`.
-They are inspire in `purrr` functions `modify` and `keep`/`discard`, but
-much more efficient since only apply to vectors and vectorized
-functions.
+They are inspired in the `purrr` functions `modify` and
+`keep`/`discard`, but much more efficient since they are restricted to
+vectors and vectorized functions.
 
 ## Installation
 
@@ -25,13 +25,17 @@ devtools::install_github("vituri/vecplyr")
 
 `vecplyr` has two main functions:
 
--   `v_filter` throw away some entries of a vector based on a condition;
+-   `v_filter` throws away some entries of a vector based on a
+    condition;
 -   `v_mutate` modifies a vector with a function when some condition is
     TRUE.
 
 Suppose we want to do the following: given an integer vector `x`, we
-want to: - keep only the even numbers of x; - add 1 to all numbers of
-x; - multiply by -1 the numbers less than 25.
+want to:
+
+-   keep only the even numbers of x;
+-   add 1 to all numbers of x;
+-   multiply by -1 the numbers less than 25.
 
 ``` r
 library(vecplyr)
@@ -116,6 +120,12 @@ mbm = microbenchmark::microbenchmark(
 
   ,times = 25L
 )
+
+mbm
+#> Unit: microseconds
+#>     expr        min         lq        mean     median         uq      max neval
+#>  vecplyr    367.902    409.404    561.0299    433.354    670.785   1169.7    25
+#>    purrr 220927.542 237861.875 280842.1641 263993.494 285044.534 494668.9    25
 ```
 
 ``` r
@@ -138,6 +148,15 @@ mbm2 = microbenchmark::microbenchmark(
 
   ,times = 25L
 )
+
+mbm2
+#> Unit: microseconds
+#>     expr        min         lq       mean     median         uq        max
+#>  vecplyr    739.582    782.288   1013.698    886.655   1115.317   1709.441
+#>    purrr 206635.941 213091.804 226684.704 217007.135 233890.232 294960.861
+#>  neval
+#>     25
+#>     25
 ```
 
 ``` r

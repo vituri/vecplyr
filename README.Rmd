@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- badges: end -->
 
-`vecplyr` extends 2 dplyr functions to vectors: `filter` and `mutate`. They are inspire in `purrr` functions `modify` and `keep`/`discard`, but much more efficient since only apply to vectors and vectorized functions.
+`vecplyr` extends 2 dplyr functions to vectors: `filter` and `mutate`. They are inspired in the `purrr` functions `modify` and `keep`/`discard`, but much more efficient since they are restricted to vectors and vectorized functions.
 
 ## Installation
 
@@ -33,10 +33,11 @@ devtools::install_github("vituri/vecplyr")
 
 `vecplyr` has two main functions: 
 
-- `v_filter` throw away some entries of a vector based on a condition;
+- `v_filter` throws away some entries of a vector based on a condition;
 - `v_mutate` modifies a vector with a function when some condition is TRUE.
 
 Suppose we want to do the following: given an integer vector `x`, we want to:
+
 - keep only the even numbers of x;
 - add 1 to all numbers of x;
 - multiply by -1 the numbers less than 25.
@@ -103,6 +104,8 @@ mbm = microbenchmark::microbenchmark(
 
   ,times = 25L
 )
+
+mbm
 ```
 
 ```{r plot1}
@@ -122,6 +125,8 @@ mbm2 = microbenchmark::microbenchmark(
 
   ,times = 25L
 )
+
+mbm2
 ```
 
 ```{r plot2}
