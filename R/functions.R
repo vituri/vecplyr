@@ -1,33 +1,26 @@
-# novas -------------------------------------------------------------------
-v_to_fun = function(.x) {
-  if (is.function(.x)) {
-    .f = .x
-  } else {
-    .f = function(x) {
-      if (length(.x) == 1) {
-        rep(.x, times = length(x))
-      } else {
-        .x
-      }
-    }
-  }
-
-  return(.f)
-}
-
-v_all_true = function(.x) {
-  rep(TRUE, length(.x))
-}
-
+#' Filter a vector
+#' @param .x A vector.
+#' @param .f A single predicate function or a logical vector of the same length as .x.
+#' @return The vector .x with (possibly) some entries deleted.
 #' @export
 v_filter = function(.x, .f = v_all_true) {
+  if (purrr::is_empty(.x)) return(.x)
+
   ids = .f(.x)
   y = .x[ids]
   return(y)
 }
 
+#' Modify a vector with some function
+#' @param .x A vector.
+#' @param .f A function to apply in .x or a vector of the same length as .x.
+#' @param .p A single predicate function or a logical vector of the same length as .x. Only those elements where .p evaluates to TRUE will be modified.
+#' @return The vector .x with possibly some entries modified by .f.
 #' @export
-v_mutate = function(.x, .f = v_all_true, .p = v_all_true) {
+#' @export
+v_mutate = function(.x, .f = identity, .p = v_all_true) {
+
+  if (purrr::is_empty(.x)) return(.x)
 
   .p = v_to_fun(.p)
   ids = .p(.x)
@@ -52,5 +45,14 @@ in_set = function(x, set = x) {
 
 #' @export
 in_set_func = function(x, set = x) {
-  \(x) in_set(x, set)
+ purrr::partial(in_set, set = set)
+}
+
+#' Check if two objects are identical
+#' @param a an object.
+#' @param b an object.
+#' @return TRUE if a and b are identical; FALSE otherwise.
+#' @export
+`%is%` = function(a, b) {
+  identical(a, b)
 }

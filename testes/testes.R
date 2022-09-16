@@ -1,43 +1,17 @@
 # genericas ---------------------------------------------------------------
 #' @export
 filter.default = function(.data, .f, ..., .preserve = FALSE) {
-  x = .data
-  ids = .f(x)
-  y = x[ids]
-  return(y)
+  .x = .data
+  v_filter(.x = .x, .f = .f)
 }
 
 #' @export
 mutate.default = function(.tbl, .funs, .predicate = NULL, ...) {
+  .x = .tbl
+  .f = .funs
+  .p = .predicate
 
-  x = .tbl
-
-  if (is.null(.predicate)) {
-    .predicate = \(x) rep(x = TRUE, times = length(x))
-  }
-
-  ids = .predicate(x)
-
-  if (all(!ids)) {
-    return(x)
-  }
-
-  y = x
-
-  if (is.function(.funs)) {
-    values = .funs(x[ids])
-  } else {
-
-    if (length(.funs) == 1) {
-      .funs = rep(.funs, times = length(ids))
-    }
-
-    values = .funs[ids]
-  }
-
-  y[ids] = values
-
-  return(y)
+  v_mutate(.x = .x, .f = .f, .p = .p)
 }
 
 1:10 %>%
@@ -80,7 +54,6 @@ iris %>%
 1:10 %>%
   v_mutate(\(x) x^2, \(x) x %% 2 == 0)
 
-
 1:10 %>%
   v_mutate(999, FALSE)
 
@@ -90,21 +63,30 @@ iris %>%
 1:10 %>%
   v_mutate(999, c(TRUE, FALSE) %>% vituripackage::sample_safe(10))
 
-tibble(
+dplyr::tibble(
   a = c(NA_character_, 'a') %>% vituripackage::sample_safe(10)
   ,b = 'b'
 ) %>%
-  mutate(
-    a = a %>% v_mutate(b, is.na)
+  dplyr::mutate(
+    if_a_is_na_then_b = a %>% v_mutate(b, is.na)
   )
 
 1:10 %>%
   v_filter(\(x) x^2 < 7)
 
-iris %>%
-  as_tibble()
+NA %>%
+  v_filter(is.na %>% (purrr::negate))
 
+mbm = microbenchmark::microbenchmark(
+  vecplyr = {
+    1:1e5 %>% v_filter(\(x) x^2 <= 5000)
+  }
+  ,purrr = {
+    1:1e5 %>% purrr::keep(\(x) x^2 <= 5000)
+  }
 
-.x = 1:10
-.f = c(99, 100) %>% vituripackage::sample_safe(10)
-.p = c(TRUE, FALSE) %>% vituripackage::sample_safe(10)
+  ,times = 25L
+)
+
+ggplot2::autoplot(mbm)
+
