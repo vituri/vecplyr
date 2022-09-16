@@ -9,9 +9,9 @@ v_mutate(.x, .f = identity, .p = v_all_true)
 \arguments{
 \item{.x}{A vector.}
 
-\item{.f}{A function to apply in .x or a vector of the same length as .x.}
+\item{.f}{A function (or purrr formula) to apply in .x or a vector of the same length as .x.}
 
-\item{.p}{A single predicate function or a logical vector of the same length as .x. Only those elements where .p evaluates to TRUE will be modified.}
+\item{.p}{A single predicate function (or purrr formula) or a logical vector of the same length as .x. Only those elements where .p evaluates to TRUE will be modified.}
 }
 \value{
 The vector .x with possibly some entries modified by .f.

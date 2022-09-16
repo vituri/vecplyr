@@ -36,6 +36,7 @@ want to:
 -   keep only the even numbers of x;
 -   add 1 to all numbers of x;
 -   multiply by -1 the numbers less than 25.
+-   sum the result
 
 ``` r
 library(vecplyr)
@@ -46,9 +47,17 @@ x = 1:50
 x %>% 
   v_filter(\(x) x %% 2 == 0) %>% # keep the even
   v_mutate(\(x) x+1) %>% # sum 1
-  v_mutate(\(x) -x, \(x) x < 25) # multiply by -1 only those that satisfy x < 25
-#>  [1]  -3  -5  -7  -9 -11 -13 -15 -17 -19 -21 -23  25  27  29  31  33  35  37  39
-#> [20]  41  43  45  47  49  51
+  v_mutate(\(x) -x, \(x) x < 25) %>% # multiply by -1 only those that satisfy x < 25 
+  sum()
+#> [1] 389
+
+# or using purrr formulas
+x %>% 
+  v_filter(~ .x %% 2 == 0) %>% # keep the even
+  v_mutate(~ .x+1) %>% # sum 1
+  v_mutate(~ -.x, ~ .x < 25) %>% # multiply by -1 only those that satisfy x < 25
+  sum()
+#> [1] 389
 
 # base R approach
 y = x[x %% 2 == 0]
@@ -56,9 +65,8 @@ z = y + 1
 w = z
 id = w < 25
 w[id] = - w[id]
-w
-#>  [1]  -3  -5  -7  -9 -11 -13 -15 -17 -19 -21 -23  25  27  29  31  33  35  37  39
-#> [20]  41  43  45  47  49  51
+sum(w)
+#> [1] 389
 ```
 
 ## Examples
@@ -112,10 +120,10 @@ x = 1:1e5
 
 mbm = microbenchmark::microbenchmark(
   vecplyr = {
-    x %>% v_filter(\(x) x^2 <= 5000)
+    x %>% v_filter(~ .x^2 <= 5000)
   }
   ,purrr = {
-    x %>% purrr::keep(\(x) x^2 <= 5000)
+    x %>% purrr::keep(~ .x^2 <= 5000)
   }
 
   ,times = 25L
@@ -123,9 +131,12 @@ mbm = microbenchmark::microbenchmark(
 
 mbm
 #> Unit: microseconds
-#>     expr        min         lq        mean     median         uq      max neval
-#>  vecplyr    367.902    409.404    561.0299    433.354    670.785   1169.7    25
-#>    purrr 220927.542 237861.875 280842.1641 263993.494 285044.534 494668.9    25
+#>     expr        min         lq        mean     median        uq        max
+#>  vecplyr    442.441    502.239    628.3806    672.757    723.61    826.684
+#>    purrr 250559.657 257176.566 279681.2356 263948.738 288398.04 426075.225
+#>  neval
+#>     25
+#>     25
 ```
 
 ``` r
@@ -140,10 +151,10 @@ x = 1:1e5
 
 mbm2 = microbenchmark::microbenchmark(
   vecplyr = {
-    x %>% v_mutate(\(x) x + 2, \(x) x <= 10000)
+    x %>% v_mutate(~ .x + 2, ~ .x <= 10000)
   }
   ,purrr = {
-    x %>% purrr::modify_if(.f = \(x) x + 2L, .p = \(x) x <= 10000)
+    x %>% purrr::modify_if(.f = ~ .x + 2L, .p = ~.x <= 10000)
   }
 
   ,times = 25L
@@ -152,8 +163,8 @@ mbm2 = microbenchmark::microbenchmark(
 mbm2
 #> Unit: microseconds
 #>     expr        min         lq       mean     median         uq        max
-#>  vecplyr    739.582    782.288   1013.698    886.655   1115.317   1709.441
-#>    purrr 206635.941 213091.804 226684.704 217007.135 233890.232 294960.861
+#>  vecplyr    822.884    913.926   1166.179   1176.038   1450.676   1772.058
+#>    purrr 230388.587 247089.104 260623.472 252050.096 263392.000 361180.861
 #>  neval
 #>     25
 #>     25

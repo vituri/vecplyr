@@ -41,6 +41,7 @@ Suppose we want to do the following: given an integer vector `x`, we want to:
 - keep only the even numbers of x;
 - add 1 to all numbers of x;
 - multiply by -1 the numbers less than 25.
+- sum the result
 
 ```{r}
 library(vecplyr)
@@ -50,7 +51,15 @@ x = 1:50
 x %>% 
   v_filter(\(x) x %% 2 == 0) %>% # keep the even
   v_mutate(\(x) x+1) %>% # sum 1
-  v_mutate(\(x) -x, \(x) x < 25) # multiply by -1 only those that satisfy x < 25
+  v_mutate(\(x) -x, \(x) x < 25) %>% # multiply by -1 only those that satisfy x < 25 
+  sum()
+
+# or using purrr formulas
+x %>% 
+  v_filter(~ .x %% 2 == 0) %>% # keep the even
+  v_mutate(~ .x+1) %>% # sum 1
+  v_mutate(~ -.x, ~ .x < 25) %>% # multiply by -1 only those that satisfy x < 25
+  sum()
 
 # base R approach
 y = x[x %% 2 == 0]
@@ -58,7 +67,7 @@ z = y + 1
 w = z
 id = w < 25
 w[id] = - w[id]
-w
+sum(w)
 ```
 
 
@@ -96,10 +105,10 @@ x = 1:1e5
 
 mbm = microbenchmark::microbenchmark(
   vecplyr = {
-    x %>% v_filter(\(x) x^2 <= 5000)
+    x %>% v_filter(~ .x^2 <= 5000)
   }
   ,purrr = {
-    x %>% purrr::keep(\(x) x^2 <= 5000)
+    x %>% purrr::keep(~ .x^2 <= 5000)
   }
 
   ,times = 25L
@@ -117,10 +126,10 @@ x = 1:1e5
 
 mbm2 = microbenchmark::microbenchmark(
   vecplyr = {
-    x %>% v_mutate(\(x) x + 2, \(x) x <= 10000)
+    x %>% v_mutate(~ .x + 2, ~ .x <= 10000)
   }
   ,purrr = {
-    x %>% purrr::modify_if(.f = \(x) x + 2L, .p = \(x) x <= 10000)
+    x %>% purrr::modify_if(.f = ~ .x + 2L, .p = ~.x <= 10000)
   }
 
   ,times = 25L

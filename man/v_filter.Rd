@@ -9,7 +9,7 @@ v_filter(.x, .f = v_all_true)
 \arguments{
 \item{.x}{A vector.}
 
-\item{.f}{A single predicate function or a logical vector of the same length as .x.}
+\item{.f}{A single predicate function (or purrr formula) or a logical vector of the same length as .x.}
 }
 \value{
 The vector .x with (possibly) some entries deleted.

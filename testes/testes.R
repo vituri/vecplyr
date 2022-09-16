@@ -43,13 +43,16 @@ iris %>%
   v_filter(\(x) x >= 4)
 
 1:10 %>%
-  v_mutate(\(x) x^2)
+  v_mutate(~ .x^2)
 
 1:10 %>%
   v_mutate(\(x) x^5 + 10, \(x) x <= 4)
 
 1:10 %>%
   v_mutate(999, \(x) x <= 4)
+
+1:10 %>%
+  v_mutate(999, ~ .x <= 4)
 
 1:10 %>%
   v_mutate(\(x) x^2, \(x) x %% 2 == 0)
